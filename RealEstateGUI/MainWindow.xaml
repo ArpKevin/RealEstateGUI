@@ -12,20 +12,26 @@
                 <ColumnDefinition Width="1*"></ColumnDefinition>
                 <ColumnDefinition Width="2*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <ListView x:Name="nevek" Grid.Column="0"></ListView>
+            <ListView x:Name="nevek" Grid.Column="0" ItemsSource="{Binding AdsList}" SelectedItem="{Binding SelectedAd, Mode=TwoWay}" IsSynchronizedWithCurrentItem="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Seller.Name}"></TextBlock>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
             <StackPanel Grid.Column="1">
                 <StackPanel Orientation="Horizontal">
                     <Label Margin="10,0,50,0">Eladó neve:</Label>
-                    <Label>asd</Label>
+                    <Label Content="{Binding SelectedAd.Seller.Name}"></Label>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Margin="10,0,50,0">Eladó telefonszáma:</Label>
-                    <Label>213</Label>
+                    <Label Content="{Binding SelectedAd.Seller.Phone}"></Label>
                 </StackPanel>
-                <Button Margin="10,0,10,0">Hirdetések betöltése</Button>
+                <Button Margin="10,0,10,0" Click="LoadAds">Hirdetések betöltése</Button>
                 <StackPanel Orientation="Horizontal">
                     <Label Margin="10,0,50,0">Hirdetések száma:</Label>
-                    <Label>1</Label>
+                    <Label Content="{Binding AdsList.Count}"></Label>
                 </StackPanel>
             </StackPanel>
         </Grid>
