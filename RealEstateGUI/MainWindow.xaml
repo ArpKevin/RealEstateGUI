@@ -1,0 +1,31 @@
+﻿<Window x:Class="RealEstateGUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RealEstateGUI"
+        mc:Ignorable="d"
+        Title="Ingatlanok" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <ListBox Grid.Column="0" Margin="10"></ListBox>
+        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10">
+            <StackPanel Orientation="Horizontal">
+                <Label>Eladó neve:</Label>
+                <Label x:Name="nevLabel"></Label>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>Eladó telefonszáma:</Label>
+                <Label x:Name="telLabel"></Label>
+            </StackPanel>
+            <Button Content="Hirdetések betöltése"></Button>
+            <StackPanel Orientation="Horizontal">
+                <Label>Hirdetések száma:</Label>
+                <Label x:Name="adsCountLabel"></Label>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
