@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Data;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -8,56 +9,86 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
-using MySql.Data;
 using MySql.Data.MySqlClient;
+using static RealEstateGUI.MainWindow;
 
 namespace RealEstateGUI
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        string connStr = "server=localhost;user=root;database=ingatlan;password=";
+        List<Ad> adList = new List<Ad>();
+        List<int> propertyCount = new List<int>();
+
         public MainWindow()
         {
             InitializeComponent();
-            connectToMySql();
 
-            using (var conn = new MySqlConnection(connStr))
+            string dbConnectionString = "server=localhost;user=root;password=;database=realestate";
+
+            using (MySqlConnection dbConnection = new MySqlConnection(dbConnectionString))
             {
-                conn.Open();
+                dbConnection.Open();
 
-                var query = "SELECT * FROM `realestates` inner join categories on categories.id = realestates.categoryId inner join sellers on sellers.id = realestates.sellerId;";
-                using (var comm = new MySqlCommand(query, conn))
+                string query =
+                    "SELECT sellers.id, sellers.name, sellers.phone, COUNT(realestates.sellerId) AS properties FROM sellers LEFT JOIN realestates ON realestates.sellerId = sellers.id GROUP BY sellers.id, sellers.name, sellers.phone;";
+                using (MySqlCommand dbCommand = new MySqlCommand(query, dbConnection))
+                using (MySqlDataReader dataReader = dbCommand.ExecuteReader())
                 {
-                    using (var reader = comm.ExecuteReader())
+                    while (dataReader.Read())
                     {
-                        while (reader.Read())
-                        {
-                            reader.GetOrdinal()
-                        }
+                        int adId = dataReader.GetInt32(0);
+                        int rooms = dataReader.GetInt32(1);
+                        string latlong = dataReader.GetString(2);
+                        int floors = dataReader.GetInt32(3);
+                        int area = dataReader.GetInt32(4);
+                        string description = dataReader.GetString(5);
+                        bool freeOfCharge = dataReader.GetBoolean(6);
+                        string imageUrl = dataReader.GetString(7);
+                        DateTime createdAt = dataReader.GetDateTime(8);
+
+                        int sellerId = dataReader.GetInt32(9);
+                        string sellerName = dataReader.GetString(10);
+                        string sellerPhone = dataReader.GetString(11);
+
+                        int categoryId = dataReader.GetInt32(12);
+                        string categoryName = dataReader.GetString(13);
+
+                        Seller seller = new Seller(sellerId, sellerName, sellerPhone);
+                        Category category = new Category(categoryId, categoryName);
+
+                        Ad ad = new Ad(adId, rooms, latlong, floors, area, description, freeOfCharge, imageUrl, createdAt, seller, category);
+                        int propertiesCount = dataReader.GetInt32(4);
+
+                        adList.Add(ad);
+                        propertyCount.Add(propertiesCount);
                     }
                 }
+                dbConnection.Close();
             }
+
+            var adNames = adList.Select(ad => ad.Seller.SellerName).ToList();
+            foreach (var name in adNames)
+            {
+                listingBox.Items.Add(name);
+            }
+            listingBox.SelectedIndex = 0;
         }
 
-        private void connectToMySql()
+        private void listingBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            MySqlConnection conn = new MySqlConnection(connStr);
-            try
-            {
-                Console.WriteLine("Connecting to MySQL...");
-                conn.Open();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            //close connection if you want
-            conn.Close();
-            Console.WriteLine("Done.");
+            sellerNameLabel.Content = listingBox.SelectedItem;
+
+            var phoneNumber = adList.Where(ad => ad.Seller.SellerName == listingBox.SelectedItem).Select(ad => ad.Seller.SellerPhone).First();
+            sellerPhoneLabel.Content = $"{phoneNumber}";
+        }
+
+        private void loadButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedadIndex = adList.FindIndex(ad => ad.Seller.SellerName == listingBox.SelectedItem);
+
+            int adPropertiesCount = propertyCount[selectedadIndex];
+
+            listingsCountLabel.Content = $"{adPropertiesCount}";
         }
     }
 }

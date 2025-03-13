@@ -8,24 +8,26 @@
         Title="Ingatlanok" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"></ColumnDefinition>
-            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width=".5*" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <ListBox Grid.Column="0" Margin="10"></ListBox>
-        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10">
-            <StackPanel Orientation="Horizontal">
-                <Label>Eladó neve:</Label>
-                <Label x:Name="nevLabel"></Label>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label>Eladó telefonszáma:</Label>
-                <Label x:Name="telLabel"></Label>
-            </StackPanel>
-            <Button Content="Hirdetések betöltése"></Button>
-            <StackPanel Orientation="Horizontal">
-                <Label>Hirdetések száma:</Label>
-                <Label x:Name="adsCountLabel"></Label>
-            </StackPanel>
-        </StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height=".5*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+
+        <ListBox x:Name="listingBox" Grid.Column="0" Grid.RowSpan="2" SelectionChanged="listingBox_SelectionChanged"/>
+
+        <Label Content="Seller Name:" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <Label x:Name="sellerNameLabel" Content="{Binding SelectedSeller.Name}" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+
+        <Label Content="Seller Phone:" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,26,0,0"/>
+        <Label x:Name="sellerPhoneLabel" Content="{Binding SelectedSeller.Phone}" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,26,0,0"/>
+
+        <Button x:Name="loadButton" Content="Load Listings" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="loadButton_Click"/>
+
+        <Label Content="Number of Listings:" Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+        <Label x:Name="listingsCountLabel" Content="0" Grid.Row="0" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+
     </Grid>
 </Window>
