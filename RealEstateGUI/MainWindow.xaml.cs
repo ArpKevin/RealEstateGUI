@@ -30,38 +30,37 @@ namespace RealEstateGUI
                 dbConnection.Open();
 
                 string query =
-                    "SELECT sellers.id, sellers.name, sellers.phone, COUNT(realestates.sellerId) AS properties FROM sellers LEFT JOIN realestates ON realestates.sellerId = sellers.id GROUP BY sellers.id, sellers.name, sellers.phone;";
+                   "SELECT * FROM realestates LEFT JOIN sellers ON realestates.sellerId = sellers.id LEFT JOIN categories on realestates.categoryId = categories.id;";
                 using (MySqlCommand dbCommand = new MySqlCommand(query, dbConnection))
                 using (MySqlDataReader dataReader = dbCommand.ExecuteReader())
                 {
                     while (dataReader.Read())
                     {
                         int adId = dataReader.GetInt32(0);
-                        int rooms = dataReader.GetInt32(1);
-                        string latlong = dataReader.GetString(2);
-                        int floors = dataReader.GetInt32(3);
-                        int area = dataReader.GetInt32(4);
-                        string description = dataReader.GetString(5);
-                        bool freeOfCharge = dataReader.GetBoolean(6);
-                        string imageUrl = dataReader.GetString(7);
-                        DateTime createdAt = dataReader.GetDateTime(8);
-
-                        int sellerId = dataReader.GetInt32(9);
-                        string sellerName = dataReader.GetString(10);
-                        string sellerPhone = dataReader.GetString(11);
-
-                        int categoryId = dataReader.GetInt32(12);
-                        string categoryName = dataReader.GetString(13);
+                        int categoryId = dataReader.GetInt32(1);
+                        int sellerId = dataReader.GetInt32(2);
+                        string description = dataReader.IsDBNull(3) ? string.Empty : dataReader.GetString(3);
+                        DateTime createdAt = dataReader.GetDateTime(4);
+                        bool freeOfCharge = dataReader.GetBoolean(5);
+                        string imageUrl = dataReader.IsDBNull(6) ? string.Empty : dataReader.GetString(6);
+                        int area = dataReader.GetInt32(7);
+                        int rooms = dataReader.GetInt32(8);
+                        int floors = dataReader.GetInt32(9);
+                        string latlong = dataReader.GetString(10);
+                        int sellerIdAgain = dataReader.GetInt32(11);
+                        string sellerName = dataReader.GetString(12);
+                        string sellerPhone = dataReader.GetString(13);
+                        int categoryIdAgain = dataReader.GetInt32(14);
+                        string categoryName = dataReader.GetString(15);
 
                         Seller seller = new Seller(sellerId, sellerName, sellerPhone);
                         Category category = new Category(categoryId, categoryName);
-
                         Ad ad = new Ad(adId, rooms, latlong, floors, area, description, freeOfCharge, imageUrl, createdAt, seller, category);
-                        int propertiesCount = dataReader.GetInt32(4);
 
                         adList.Add(ad);
-                        propertyCount.Add(propertiesCount);
                     }
+
+
                 }
                 dbConnection.Close();
             }
@@ -83,12 +82,8 @@ namespace RealEstateGUI
         }
 
         private void loadButton_Click(object sender, RoutedEventArgs e)
-        {
-            var selectedadIndex = adList.FindIndex(ad => ad.Seller.SellerName == listingBox.SelectedItem);
-
-            int adPropertiesCount = propertyCount[selectedadIndex];
-
-            listingsCountLabel.Content = $"{adPropertiesCount}";
+        { 
+            listingsCountLabel.Content = adList.Count(ad => ad.Seller.SellerName == listingBox.SelectedItem);
         }
     }
 }

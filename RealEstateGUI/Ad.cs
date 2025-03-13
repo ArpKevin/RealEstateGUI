@@ -13,9 +13,9 @@ namespace RealEstateGUI
         public string Latlong { get; set; }
         public int Floors { get; set; }
         public int Area { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public bool FreeOfCharge { get; set; }
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
         public DateTime CreateAt { get; set; }
         public Seller Seller { get; set; }
         public Category Category { get; set; }
